@@ -1,6 +1,7 @@
 import { Author } from "../models/Author.js";
 import { Social } from "../models/social.js";
-
+import config from "config";
+import bcrypt from "bcrypt";
 export const GetAllAuthors = async (req, res) => {
   try {
     const Authors = await Author.findAll({include:Social});
@@ -48,13 +49,14 @@ export const AddAuthor = async (req, res) => {
     if (check) {
       return res.status(403).send({ message: "Such Author already exists" });
     }
+    const hashedPassword= await bcrypt.hash(password,7)
     const NewAuthor = await Author.create({
       first_name,
       last_name,
       nick_name,
       email,
       phone_number,
-      password,
+      password:hashedPassword ,
       info,
       position,
       is_expert,
